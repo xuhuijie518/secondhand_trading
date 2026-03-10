@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router'
 let searchcontent = ref('')
 let infoshow = ref(false)
 
@@ -68,6 +69,15 @@ let goodslist = ref([
   { id: 23, name: '华强买瓜 正版西瓜，保熟，不劈不裂', img: '', price: 15, seller: '生瓜蛋子摊' },
   { id: 24, name: '刘华强 你这瓜保熟吗名场面T恤，鬼畜区标配', img: '', price: 39, seller: '衡州水果摊' },
 ]);
+
+
+const router = useRouter()
+const openPublishPage = () => {
+  const routeData = router.resolve({
+    path: '/publish'
+  })
+  window.open(routeData.href, '_blank')
+}
 </script>
 
 <template>
@@ -170,7 +180,7 @@ let goodslist = ref([
     </div>
   </div>
   <div class="sidebar">
-    <div class="side">
+    <div class="side" @click="openPublishPage">
       <div class="img icon1"></div>
       <div class="word">发闲置</div>
     </div>
