@@ -78,6 +78,12 @@ const openPublishPage = () => {
   })
   window.open(routeData.href, '_blank')
 }
+const openMessagePage = () => {
+  const routeData = router.resolve({
+    path: '/message'
+  })
+  window.open(routeData.href, '_blank')
+}
 </script>
 
 <template>
@@ -185,7 +191,7 @@ const openPublishPage = () => {
       <div class="word">发闲置</div>
     </div>
     <span></span>
-    <div class="side">
+    <div class="side" @click="openMessagePage">
       <div class="img icon2"></div>
       <div class="word">消息</div>
     </div>

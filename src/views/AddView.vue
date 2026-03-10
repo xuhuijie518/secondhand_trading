@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router'
 let infoshow = ref(false)
 let timer = null
 const hideInfo = () => {
@@ -16,11 +17,11 @@ let fileList = ref([])
 // 弹窗相关响应式数据
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
-// 删除文件的处理函数（移除 TypeScript 类型标注）
+// 删除文件的处理函数
 const handleRemove = (uploadFile, uploadFiles) => {
   console.log(uploadFile, uploadFiles)
 }
-// 预览图片的处理函数（移除 TypeScript 类型标注）
+// 预览图片的处理函数
 const handlePictureCardPreview = (uploadFile) => {
   dialogImageUrl.value = uploadFile.url
   dialogVisible.value = true
@@ -41,12 +42,25 @@ const ifallowsubmit = computed(() => {
     shipment.value.trim() !== ''
   return !isAllFilled
 })
+
+const router = useRouter()
+const goHome = () => {
+  router.push({ 
+    path: '/'
+  });
+};
+const openMessagePage = () => {
+  const routeData = router.resolve({
+    path: '/message'
+  })
+  window.open(routeData.href, '_blank')
+}
 </script>
 
 <template>
   <div class="add">
     <div class="topbar">
-      <div class="word">
+      <div class="word" @click="goHome">
         校园二手交易
       </div>
       <div class="info">
@@ -168,7 +182,7 @@ const ifallowsubmit = computed(() => {
     </div>
   </div>
   <div class="sidebar">
-    <div class="side">
+    <div class="side" @click="openMessagePage">
       <div class="img icon2"></div>
       <div class="word">消息</div>
     </div>
