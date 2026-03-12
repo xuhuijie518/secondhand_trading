@@ -348,11 +348,21 @@ const openPublishPage = () => {
               </div>
             </div>
             <div v-else class="main">
-              <div class="top">
-                <div class="name">咕咕嘎嘎</div>
-                <div class="home">
-                  <img src="/src/assets/img/home.svg"/>
-                  个人空间
+              <div class="top" style="height: 140px;flex-direction: column;">
+                <div class="info">
+                  <div class="name">咕咕嘎嘎</div>
+                  <div class="home">
+                    <img src="/src/assets/img/home.svg"/>
+                    个人空间
+                  </div>
+                </div>
+                <div class="shop">
+                  <div class="shopimg">
+                    <img src="/src/assets/img/test/p1.png"/>
+                  </div>
+                  <div class="price">
+                    ￥99.00
+                  </div>
                 </div>
               </div>
               <div class="bottom">
@@ -567,6 +577,7 @@ img {
         flex-direction: column;
         color: #000;
         align-items: flex-start;
+        z-index: 100;
         cursor: default;
         .name {
           display: flex;
@@ -682,6 +693,7 @@ img {
           width: 100%;
           height: 100%;
           overflow-y: auto;
+          scroll-behavior: smooth;
         }
         /* 滚动条整体 */
         .area::-webkit-scrollbar {
@@ -803,6 +815,35 @@ img {
         padding: 0 15px;
         font-weight: 800;
         border-bottom: 0.5px solid #cecece;
+        .info {
+          width: 100%;
+          height: 60px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .shop {
+          width: 100%;
+          height: 80px;
+          display: flex;
+          align-items: start;
+          .shopimg {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+          }
+          .price {
+            color: #ff4d4d;
+            font-weight: 600;
+            font-size: 16px;
+            margin-left: 5px;
+          }
+        }
         .name {
           font-size: 18px;
           font-weight: 600;
@@ -840,11 +881,14 @@ img {
             scroll-behavior: smooth;
           }
           .talkarea::-webkit-scrollbar {
-            display: none; /* Chrome、Safari */
+            width: 6px;
           }
-          .talkarea {
-            -ms-overflow-style: none; /* IE、Edge */
-            scrollbar-width: none; /* Firefox */
+          .talkarea::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          .talkarea::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
           }
           .chatbox {
             position: absolute;

@@ -304,6 +304,7 @@ img {
         flex-direction: column;
         color: #000;
         align-items: flex-start;
+        z-index: 100;
         cursor: default;
         .name {
           display: flex;
