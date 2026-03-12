@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router'
 let infoshow = ref(false)
 let timer = null
@@ -14,8 +14,214 @@ const showInfo = () => {
 }
 
 let selitemlist = ref([
-  { name: '咕咕嘎嘎', avatar: '/src/assets/img/test/a1.jpg', newtalk: '咕咕嘎嘎!!!', time: '2026-03-10 22:33:44', photo: '/src/assets/img/test/p1.png' }
+  { id: 1, name: '咕咕嘎嘎', avatar: '/src/assets/img/test/a1.jpg', newtalk: '咕咕嘎嘎!!!', time: '2026-03-10 22:33:44', photo: '/src/assets/img/test/p1.png' },
+  { id: 2, name: '下北泽小卖部', avatar: '', newtalk: 'やりますね', time: '2025-11-14 11:45:14', photo: '/src/assets/img/test/p2.jpg' },
+  { id: 3, name: '奏大煎饼店', avatar: '', newtalk: '阿嘎慕斯！！', time: '2025-11-11 10:40:10', photo: '/src/assets/img/test/p3.gif' },
 ])
+let selectedrole = ref('')
+const selectrole = (id) => {
+  selectedrole.value = id;
+  nextTick(() => {
+    scrollToBottom2();
+  });
+}
+
+
+let currentuser = ref({
+  id: Date.now() + Math.random().toString(36).substring(2, 9),
+  role: 'self',
+  userId: 1,
+  name: '用户名',
+  avatar: '/src/assets/img/avatar2.png'
+});
+// 对话内容
+const messages = ref([
+  {
+    id: 2020601,
+    role: 'other',
+    userId: 1,
+    name: '咕咕嘎嘎',
+    avatar: '/src/assets/img/test/a1.jpg',
+    text: '我从南极来',
+    time: Date.now()
+  },
+  {
+    id: 2020602,
+    role: 'other',
+    userId: 1,
+    name: '咕咕嘎嘎',
+    avatar: '/src/assets/img/test/a1.jpg',
+    text: '最喜欢持石',
+    time: Date.now()
+  },
+  {
+    id: 2020603,
+    role: 'other',
+    userId: 1,
+    name: '咕咕嘎嘎',
+    avatar: '/src/assets/img/test/a1.jpg',
+    text: '灵感菇刮擦',
+    time: Date.now()
+  },
+  {
+    id: 2020604,
+    role: 'other',
+    userId: 1,
+    name: '咕咕嘎嘎',
+    avatar: '/src/assets/img/test/a1.jpg',
+    text: '咕咕又嘎嘎',
+    time: Date.now()
+  },
+  {
+    id: 2020605,
+    role: 'other',
+    userId: 1,
+    name: '咕咕嘎嘎',
+    avatar: '/src/assets/img/test/a1.jpg',
+    text: '组了个乐队',
+    time: Date.now()
+  },
+  {
+    id: 2020606,
+    role: 'other',
+    userId: 1,
+    name: '咕咕嘎嘎',
+    avatar: '/src/assets/img/test/a1.jpg',
+    text: '全都不是人',
+    time: Date.now()
+  },
+  {
+    id: 2020607,
+    role: 'other',
+    userId: 1,
+    name: '咕咕嘎嘎',
+    avatar: '/src/assets/img/test/a1.jpg',
+    text: '想成为人类',
+    time: Date.now()
+  },
+  {
+    id: 2020608,
+    role: 'other',
+    userId: 1,
+    name: '咕咕嘎嘎',
+    avatar: '/src/assets/img/test/a1.jpg',
+    text: '神人把我黑',
+    time: Date.now()
+  },
+  {
+    id: 2020609,
+    role: 'self',
+    userId: 2,
+    name: '用户名',
+    avatar: '/src/assets/img/avatar2.png',
+    text: '咕咕嘎嘎！！！',
+    time: Date.now()
+  },
+]);
+let inputText = ref('')
+const ifallowsubmit = computed(() => {
+  const isAllFilled = 
+    inputText.value.trim() !== ''
+  return !isAllFilled
+})
+let newMessage = ref('');
+const sendmessage = () => {
+  if(!inputText.value) {
+    console.log('请输入消息')
+    return;
+  }
+  newMessage.value = {
+    ...currentuser.value,
+    text: String(inputText.value),
+    time: Date.now()
+  }
+  messages.value.push(newMessage.value);
+  nextTick(scrollToBottom);
+  inputText.value = '';
+};
+const sendemoji = (img) => {
+  newMessage.value = {
+    ...currentuser.value,
+    emoji: img,
+    time: Date.now()
+  }
+  messages.value.push(newMessage.value);
+  nextTick(scrollToBottom);
+  ifEmoji.value = false;
+  ifchafen.value = false;
+};
+const sendphoto = (img) => {
+  newMessage.value = {
+    ...currentuser.value,
+    photo: img,
+    time: Date.now()
+  }
+  messages.value.push(newMessage.value);
+  nextTick(scrollToBottom);
+};
+const handleEnterKey = (event) => {
+  if (event.key !== 'Enter') return;
+
+  // Shift + Enter 换行
+  if (event.shiftKey) {
+    return; // 直接允许默认换行
+  }
+
+  // 普通 Enter 发送
+  event.preventDefault();
+  sendmessage();
+};
+
+const acceptFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+const fileInput = ref(null)
+const handleClickUpload = () => {
+  if(currentuser.value) {
+    fileInput.value.click();
+  }
+}
+const handleFileChange = (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.readAsDataURL(file)
+  reader.onload = () => {
+    const base64 = reader.result
+    sendphoto(base64);
+  }
+}
+const delmessage = (id) => {
+  messages.value = messages.value.filter(item => item.id !== id)
+};
+const chatarea = ref('');
+const scrollToBottom = () => {
+  const el = chatarea.value
+  if (el) {
+    el.scrollTo({
+      top: el.scrollHeight,
+      behavior: 'smooth'
+    })
+  }
+}
+// 无动画、瞬间定位到最底部的函数
+const scrollToBottom2 = () => {
+  const el = chatarea.value;
+  if (!el) return;
+
+  // 步骤1：临时禁用浏览器的平滑滚动（关键！）
+  const originalBehavior = el.style.scrollBehavior;
+  el.style.scrollBehavior = 'auto'; // 强制关闭平滑滚动
+
+  // 步骤2：瞬间定位到底部（无任何动画）
+  el.scrollTop = el.scrollHeight;
+
+  // 步骤3：恢复原有scrollBehavior（避免影响后续操作）
+  // 用setTimeout确保定位完成后再恢复，防止浏览器优化导致失效
+  setTimeout(() => {
+    el.style.scrollBehavior = originalBehavior;
+  }, 0);
+};
+
+
 
 const router = useRouter()
 const goHome = () => {
@@ -99,36 +305,147 @@ const openPublishPage = () => {
             </el-tooltip>
           </div>
           <div class="selectarea">
-            <div class="selectitem">
-              <div class="icon">
-                <img src="/src/assets/img/bell.png"/>
+            <div class="area">
+              <div class="selectitem" :style="{backgroundColor: selectedrole == 'notice' ? '#eeeeee':'#fafafa'}" @click="selectedrole = 'notice'">
+                <div class="icon">
+                  <img src="/src/assets/img/bell.png"/>
+                </div>
+                <div class="word">
+                  <div class="name">通知消息</div>
+                  <div class="talk">您的闲置已被下单</div>
+                  <div class="time">2026-03-10 11:45:14</div>
+                </div>
               </div>
-              <div class="word">
-                <div class="name">通知消息</div>
-                <div class="talk">您的闲置已被下单</div>
-                <div class="time">2026-03-10 11:45:14</div>
-              </div>
-              <div class="photo"></div>
-            </div>
-            <div class="selectitem" v-for="(item,index) in selitemlist" :key="index">
-              <div class="icon" v-if="item.avatar">
-                <img :src="item.avatar"/>
-              </div>
-              <div class="icon" v-else>
-                <img src="/src/assets/img/avatar2.png"/>
-              </div>
-              <div class="word">
-                <div class="name">{{ item.name }}</div>
-                <div class="talk">{{ item.newtalk }}</div>
-                <div class="time">{{ item.time }}</div>
-              </div>
-              <div class="photo">
-                <img :src="item.photo"/>
+              <div class="selectitem" :style="{backgroundColor: selectedrole == item.id ? '#eeeeee':'#fafafa'}" v-for="(item,index) in selitemlist" :key="index" @click="selectrole(item.id)">
+                <div class="icon" v-if="item.avatar">
+                  <img :src="item.avatar"/>
+                </div>
+                <div class="icon" v-else>
+                  <img src="/src/assets/img/avatar2.png"/>
+                </div>
+                <div class="word">
+                  <div class="name">{{ item.name }}</div>
+                  <div class="talk">{{ item.newtalk }}</div>
+                  <div class="time">{{ item.time }}</div>
+                </div>
+                <div class="photo">
+                  <img :src="item.photo"/>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="right"></div>
+        <div class="right">
+          <div v-if="selectedrole" style="width: 100%; height: 100%;">
+            <div v-if="selectedrole == 'notice'" class="main">
+              <div class="top">
+                <div class="name">通知消息</div>
+              </div>
+              <div class="bottom">
+                <div class="area">
+
+                </div>
+              </div>
+            </div>
+            <div v-else class="main">
+              <div class="top">
+                <div class="name">咕咕嘎嘎</div>
+                <div class="home">
+                  <img src="/src/assets/img/home.svg"/>
+                  个人空间
+                </div>
+              </div>
+              <div class="bottom">
+                <div class="area">
+                  <div class="talkarea" ref="chatarea">
+                    <div class="chatbox" ref="chatbox">
+                      <div class="chatrole" v-for="(item) in messages" :key="item.id">
+                        <div class="rolevary" v-if="item.role == 'other'">
+                          <div class="chatavatar">
+                            <img :src="item.avatar"/>
+                          </div>
+                          <div class="chatright">
+                            <div class="charname">{{ item.name }}</div>
+                            <div class="chartalk">
+                              <div class="bubblebox">
+                                <div v-if="item.emoji" class="emojibubble">
+                                  <div class="emojiimgbox">
+                                    <img :src="item.emoji"/>
+                                  </div>
+                                </div>
+                                <div v-else-if="item.photo" class="photobubble">
+                                  <img :src="item.photo" style="max-width: 100%;"/>
+                                </div>
+                                <div
+                                  class="bubble"
+                                  v-else
+                                >
+                                  {{ item.text }}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="rolevary2" v-if="item.role == 'self'">
+                          <div class="chatright2">
+                            <div class="chartalk2">
+                              <div class="bubblebox2">
+                                <div v-if="item.emoji" class="emojibubble">
+                                  <div class="emojiimgbox">
+                                    <img :src="item.emoji"/>
+                                  </div>
+                                </div>
+                                <div v-else-if="item.photo" class="photobubble">
+                                  <img :src="item.photo" style="max-width: 100%;"/>
+                                </div>
+                                <div
+                                  v-else
+                                  class="bubble2"
+                                >
+                                  {{ item.text }}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sendarea">
+                    <div class="tool">
+                      <div class="emoji" @click="openemoji()"></div>
+                      <div class="photo" @click="handleClickUpload"></div>
+                      <input
+                        ref="fileInput"
+                        type="file"
+                        :accept="acceptFileTypes"
+                        style="display: none"
+                        @change="handleFileChange"
+                      />
+                    </div>
+                    <div class="inputa">
+                      <textarea
+                        ref="inputRef"
+                        v-model="inputText"
+                        placeholder="请输入"
+                        class="textarea"
+                        @keydown="handleEnterKey"
+                      ></textarea>
+                    </div>
+                    <div class="send">
+                      <el-button @click="sendmessage" type="primary" round :disabled="ifallowsubmit">发送</el-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-else class="none">
+            <img src="/src/assets/img/mbg.png"/>
+            <div class="font1">尚未选择任何联系人</div>
+            <div class="font2">快点左侧列表聊起来吧~</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -350,7 +667,6 @@ img {
         padding: 0 15px;
         font-size: 20px;
         font-weight: 800;
-        border-bottom: 0.5px solid #cecece;
         img {
           width: 30px;
           height: auto;
@@ -360,9 +676,28 @@ img {
       .selectarea {
         width: 100%;
         flex: 1;
-        overflow-y: auto;
+        position: relative;
+        .area {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          overflow-y: auto;
+        }
+        /* 滚动条整体 */
+        .area::-webkit-scrollbar {
+          width: 7px;
+        }
+        /* 滚动条轨道 */
+        .area::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        /* 滑块 */
+        .area::-webkit-scrollbar-thumb {
+          background: #c1c1c1;
+          border-radius: 3px;
+        }
         .selectitem:hover {
-          background-color: #eeeeee;
+          background-color: #eeeeee !important;
         }
         .selectitem {
           width: 100%;
@@ -397,7 +732,7 @@ img {
               overflow: hidden;
               display: -webkit-box;
               -webkit-box-orient: vertical;
-              -webkit-line-clamp: 1;      /* 限制两行 */
+              -webkit-line-clamp: 1;
               line-clamp: 1;
             }
             .talk {
@@ -409,7 +744,7 @@ img {
               overflow: hidden;
               display: -webkit-box;
               -webkit-box-orient: vertical;
-              -webkit-line-clamp: 1;      /* 限制两行 */
+              -webkit-line-clamp: 1;
               line-clamp: 1;
             }
             .time {
@@ -426,6 +761,7 @@ img {
             display: flex;
             justify-content: center;
             align-items: center;
+            background-color: #fff;
           }
         }
       }
@@ -433,6 +769,322 @@ img {
     .right {
       width: 70%;
       height: 100%;
+      .none {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        img {
+          width: 130px;
+        }
+        .font1 {
+          font-size: 15px;
+          font-weight: 500;
+        }
+        .font2 {
+          font-size: 13px;
+          color: #a6a6c4;
+        }
+      }
+      .main {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .top {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+        font-weight: 800;
+        border-bottom: 0.5px solid #cecece;
+        .name {
+          font-size: 18px;
+          font-weight: 600;
+        }
+        .home {
+          display: flex;
+          align-items: center;
+          font-size: 14px;
+          font-weight: 500;
+          padding: 4px 12px;
+          border-radius: 20px;
+          border: 1px solid #ebebeb;
+          cursor: pointer;
+          img {
+            width: 16px;
+            height: 17px;
+            margin-right: 5px;
+          }
+        }
+      }
+      .bottom {
+        width: 100%;
+        flex: 1;
+        position: relative;
+        .area {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          .talkarea {
+            width: 100%;
+            height: calc(100% - 150px);
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+          }
+          .talkarea::-webkit-scrollbar {
+            display: none; /* Chrome、Safari */
+          }
+          .talkarea {
+            -ms-overflow-style: none; /* IE、Edge */
+            scrollbar-width: none; /* Firefox */
+          }
+          .chatbox {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding-top: 10px;
+            .chatrole {
+              width: 100%;
+              display: flex;
+              flex-direction: column;
+              align-items: start;
+            }
+            .rolevary {
+              margin-left: 20px;
+              width: 96%;
+              display: flex;
+              align-items: start;
+            }
+            .rolevary2 {
+              width: 100%;
+              display: flex;
+              align-items: start;
+              justify-content: end;
+            }
+            .chatavatar {
+              width: 55px;
+              aspect-ratio: 1 / 1;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              overflow: hidden;
+              border-radius: 50%;
+              margin-top: 10px;
+            }
+            .chatright {
+              width: 84.5%;
+              margin-left: 15px;
+              display: flex;
+              flex-direction: column;
+            }
+            .chatright2 {
+              width: 89.5%;
+              display: flex;
+              justify-content: end;
+            }
+            .charname {
+              width: 100%;
+              color: #666666;
+              font-size: 15px;
+              padding: 0.1vw 0;
+            }
+            .chartalk {
+              display: flex;
+              width: 89%;
+              margin-bottom: 5px;
+            }
+            .chartalk2 {
+              display: flex;
+              justify-content: end;
+              width: 98%;
+              margin-bottom: 5px;
+              padding-right: 20px;
+            }
+            .bubblebox {
+              display: flex;
+              position: relative;
+            }
+            .emojibubble {
+              position: relative;
+              padding: 5px;
+              background-color: #ffffff;
+              border: 2px solid #cdd3dc;
+              border-radius: 10px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+            .emojiimgbox {
+              width: 190px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              overflow: hidden;
+            }
+            .emojiimgbox img {
+              height: auto;
+              width: 100%;
+            }
+            .photobubble {
+              position: relative;
+              background-color: #ffffff;
+              border: 2px solid #cdd3dc;
+              border-radius: 10px;
+              padding: 5px;
+              display: flex;
+              max-width: 250px;
+            }
+            .bubble {
+              position: relative;
+              font-size: 13.5px;
+              background-color: #f2f2f4;
+              border-radius: 6px;
+              padding: 6px 8px;
+              /* 关键部分：让英文单词也能自动换行 */
+              word-wrap: break-word;
+              word-break: break-all;
+              white-space: pre-wrap;
+            }
+            .bubble::after {
+              content: '';
+              position: absolute;
+              right: 99.8%;
+              top: 25%;
+              border-width: 5px;
+              border-style: solid;
+              border-color: transparent #f2f2f4 transparent transparent;
+            }
+
+            .bubblebox2 {
+              display: flex;
+              position: relative;
+            }
+            .bubble2 {
+              position: relative;
+              font-size: 13.5px;
+              color: #fff;
+              background-color: #26b3f3;
+              border-radius: 6px;
+              padding: 6px 8px;
+              /* 关键部分：让英文单词也能自动换行 */
+              word-wrap: break-word;
+              word-break: break-all;
+              white-space: pre-wrap;
+            }
+            .bubble2::after {
+              content: '';
+              position: absolute;
+              left: 99.8%;
+              top: 25%;
+              border-width: 0.4vw;
+              border-style: solid;
+              border-color: transparent transparent transparent #26b3f3;
+            }
+          }
+
+          .sendarea {
+            width: 100%;
+            height: 150px;
+            background-color: #fcfcfc;
+            border-top: 1px solid #cecece;
+            .tool {
+              width: 100%;
+              height: 35px;
+              display: flex;
+              align-items: center;
+              .photo {
+                width: 30px;
+                height: 30px;
+                cursor: pointer;
+                -webkit-mask: url('/src/assets/photo.png') no-repeat center;
+                mask: url('/src/assets/photo.png') no-repeat center;
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                background-color: #bdbdbd;
+                transition: all 0.3s ease;
+                margin-left: 10px;
+              }
+              .emoji {
+                width: 27px;
+                height: 27px;
+                cursor: pointer;
+                -webkit-mask: url('/src/assets/emoji.png') no-repeat center;
+                mask: url('/src/assets/emoji.png') no-repeat center;
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                background-color: #bdbdbd;
+                transition: all 0.3s ease;
+                position: relative;
+                margin-left: 10px;
+              }
+              .photo:hover, .emoji:hover {
+                background-color: #409eff;
+              }
+            }
+            .inputa {
+              width: 100%;
+              height: 75px;
+              display: flex;
+              .textarea {
+                width: 100%;
+                height: 100%;
+                border: none;
+                background-color: #fcfcfc;
+                font-size: 16px;
+                font-family: sans-serif;
+                padding: 0 10px;
+                resize: none;
+                overflow: auto;
+                transition: all 0.3s ease;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* IE、Edge */
+              }
+              .textarea::-webkit-scrollbar {
+                display: none; /* Chrome、Safari */
+              }
+              .textarea::placeholder { color: #a8abb2; }
+              .textarea:focus {
+                outline: none;
+              }
+            }
+            .send {
+              width: 100%;
+              height: 40px;
+              display: flex;
+              justify-content: end;
+              align-items: center;
+              padding-right: 5px;
+              :deep(.el-button) {
+                width: 77px;
+                height: 30px;
+                font-size: 14px;
+              }
+            }
+          }
+        }
+        /* 滚动条整体 */
+        .area::-webkit-scrollbar {
+          width: 7px;
+        }
+        /* 滚动条轨道 */
+        .area::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        /* 滑块 */
+        .area::-webkit-scrollbar-thumb {
+          background: #c1c1c1;
+          border-radius: 3px;
+        }
+      }
     }
   }
 }
