@@ -241,7 +241,7 @@ const openPublishPage = () => {
   <div class="add">
     <div class="topbar">
       <div class="word" @click="goHome">
-        校园二手交易
+        <img src="/src/assets/img/logo.png"/>
       </div>
       <div class="info">
         <div class="user" @mouseenter="showInfo" @mouseleave="hideInfo">
@@ -491,12 +491,15 @@ img {
 }
 .topbar {
   width: 100%;
-  padding: 20px 0;
+  padding: 3px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #26b3f3;
   .word {
+    width: 200px;
+    display: flex;
+    align-items: center;
     font-size: 25px;
     color: #fff;
     font-weight: 800;
