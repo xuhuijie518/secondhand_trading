@@ -89,6 +89,15 @@ const openMessagePage = () => {
   })
   window.open(routeData.href, '_blank')
 }
+const openPersonalPage = () => {
+  const routeData = router.resolve({
+    path: '/personal',
+    query: {
+      name: '用户名'
+    }
+  })
+  window.open(routeData.href, '_blank')
+}
 </script>
 
 <template>
@@ -106,10 +115,12 @@ const openMessagePage = () => {
       </div>
       <div class="info">
         <div class="user" @mouseenter="showInfo" @mouseleave="hideInfo">
-          <div class="avatar">
-            <img src="/src/assets/img/avatar.png"/>
+          <div @click="openPersonalPage" style="display: flex; align-items: center;">
+            <div class="avatar">
+              <img src="/src/assets/img/avatar.png"/>
+            </div>
+            用户名
           </div>
-          用户名
           <transition name="fade">
             <div class="infodetail" v-if="infoshow" @mouseenter="showInfo" @mouseleave="infoshow = false">
               <div class="name">

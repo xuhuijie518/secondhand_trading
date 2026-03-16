@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AddView from '@/views/AddView.vue';
 import MessageView from '@/views/MessageView.vue';
+import PersonalView from '@/views/PersonalView.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -29,12 +30,23 @@ const router = createRouter({
 				title: "聊天",
 			},
     },
+    {
+      path: '/personal',
+      name: 'personal',
+      component: PersonalView,
+      meta: {
+				title: "个人页",
+			},
+    },
   ],
 })
 
 router.beforeEach((to, from, next) => {
-  const title = to.meta?.title;
-  if (title) document.title = title;
+  if (to.path === "/personal") {
+    document.title = to.query.name || "个人页";
+  } else {
+    to.meta?.title && (document.title = to.meta.title);
+  }
  	next();
 });
 

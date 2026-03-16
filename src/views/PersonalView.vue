@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router'
+import personalspace from '@/components/personal/personalspace.vue';
+
 let infoshow = ref(false)
 let timer = null
 const hideInfo = () => {
@@ -13,34 +15,8 @@ const showInfo = () => {
   infoshow.value = true
 }
 
-let fileList = ref([])
-// 弹窗相关响应式数据
-const dialogImageUrl = ref('')
-const dialogVisible = ref(false)
-// 删除文件的处理函数
-const handleRemove = (uploadFile, uploadFiles) => {
-  console.log(uploadFile, uploadFiles)
-}
-// 预览图片的处理函数
-const handlePictureCardPreview = (uploadFile) => {
-  dialogImageUrl.value = uploadFile.url
-  dialogVisible.value = true
-}
-
-let introduction = ref('')
-let typevalue = ref('')
-let price = ref('')
-let originalprice = ref('')
-let shipment = ref('1')
-const ifallowsubmit = computed(() => {
-  const isAllFilled = 
-    fileList.value.length > 0 &&
-    introduction.value.trim() !== '' &&
-    typevalue.value.trim() !== '' &&
-    price.value.trim() !== '' &&
-    shipment.value.trim() !== ''
-  return !isAllFilled
-})
+let isOpen1 = ref(true)
+let isOpen2 = ref(true)
 
 const router = useRouter()
 const goHome = () => {
@@ -48,6 +24,12 @@ const goHome = () => {
     path: '/'
   });
 };
+const openPublishPage = () => {
+  const routeData = router.resolve({
+    path: '/publish'
+  })
+  window.open(routeData.href, '_blank')
+}
 const openMessagePage = () => {
   const routeData = router.resolve({
     path: '/message'
@@ -85,7 +67,7 @@ const openPersonalPage = () => {
                 <div class="avatar">
                   <img src="/src/assets/img/avatar2.png"/>
                 </div>
-                用户名
+                  用户名
               </div>
               <div class="item">
                 <div class="itemname">我买到的</div>
@@ -122,76 +104,65 @@ const openPersonalPage = () => {
     </div>
     <div class="contentbox">
       <div class="content">
-        <div class="title">发闲置</div>
-        <div class="secondtitle">基础信息</div>
-        <div class="thirdtitle">宝贝图片<span>*</span></div>
-        <el-upload
-          v-model:file-list="fileList"
-          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove"
-        >
-          <el-icon><Plus /></el-icon>
-        </el-upload>
-        <div class="thirdtitle">宝贝描述<span>*</span></div>
-        <el-input
-          v-model="introduction"
-          maxlength="1500"
-          style="width: 100%"
-          size="large"
-          :autosize="{ minRows: 4, maxRows: 6 }"
-          placeholder="描述一下宝贝的品牌型号、货品来源..."
-          show-word-limit
-          type="textarea"
-        />
-        <div class="thirdtitle">分类<span>*</span></div>
-        <el-select v-model="typevalue" placeholder="请选择" style="width: 240px">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-
-        <div class="secondtitle">价格</div>
-        <div class="thirdtitle">价格<span>*</span></div>
-        <el-input
-          v-model="price"
-          placeholder="0.00"
-          style="width: 240px"
-          type="number"
-        >
-          <template #prefix>
-            ￥
-          </template>
-        </el-input>
-        <div class="thirdtitle">原价</div>
-        <el-input
-          v-model="originalprice"
-          placeholder="0.00"
-          style="width: 240px"
-          type="number"
-        >
-          <template #prefix>
-            ￥
-          </template>
-        </el-input>
-
-        <div class="secondtitle">发货设置</div>
-        <el-radio-group v-model="shipment">
-          <el-radio value="1" size="large">配送</el-radio>
-          <el-radio value="2" size="large">自提</el-radio>
-        </el-radio-group>
+        <div class="leftbar">
+          <div class="baritem">
+            <img src="/src/assets/img/user.webp"/>
+            个人空间
+          </div>
+          <div class="baritem" @click="isOpen1 = !isOpen1">
+            <img src="/src/assets/img/trade.webp"/>
+            <span>我的交易</span>
+            <div class="wsubarrow" :class="{ open: isOpen1 }">
+              <img src="/src/assets/img/frame.png" />
+            </div>
+          </div>
+          <el-collapse-transition>
+            <div class="fold" v-if="isOpen1">
+              <div class="baritem2">
+                我发布的
+              </div>
+              <div class="baritem2">
+                我卖出的
+              </div>
+              <div class="baritem2">
+                我买到的
+              </div>
+            </div>
+          </el-collapse-transition>
+          <div class="baritem">
+            <img src="/src/assets/img/collection.webp"/>
+            我的收藏
+          </div>
+          <div class="baritem" @click="isOpen2 = !isOpen2">
+            <img src="/src/assets/img/setting.webp"/>
+            <span>账号设置</span>
+            <div class="wsubarrow" :class="{ open: isOpen2 }">
+              <img src="/src/assets/img/frame.png" />
+            </div>
+          </div>
+          <el-collapse-transition>
+            <div class="fold" v-if="isOpen2">
+              <div class="baritem2">
+                个人资料
+              </div>
+              <div class="baritem2" style="margin-bottom: 0;">
+                账号与安全
+              </div>
+            </div>
+          </el-collapse-transition>
+        </div>
+        <div class="right">
+          <personalspace/>
+        </div>
       </div>
-    </div>
-
-    <div class="submit">
-      <el-button type="primary" round :disabled="ifallowsubmit">发布</el-button>
     </div>
   </div>
   <div class="sidebar">
+    <div class="side" @click="openPublishPage">
+      <div class="img icon1"></div>
+      <div class="word">发闲置</div>
+    </div>
+    <span></span>
     <div class="side" @click="openMessagePage">
       <div class="img icon2"></div>
       <div class="word">消息</div>
@@ -207,9 +178,6 @@ const openPersonalPage = () => {
       <div class="word">客服</div>
     </div>
   </div>
-  <el-dialog v-model="dialogVisible">
-    <img style="width: 100%" :src="dialogImageUrl" alt="Preview Image" />
-  </el-dialog>
 </template>
 
 <style scoped lang="scss">
@@ -384,31 +352,82 @@ img {
 }
 .contentbox {
   width: 100%;
-  padding: 25px 220px;
+  padding: 20px 130px;
   .content {
     width: 100%;
-    border-radius: 10px;
-    background-color: #fff;
-    padding: 20px;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 100px;
-    .title {
-      font-size: 24px;
-      font-weight: 800;
-    }
-    .secondtitle {
-      font-size: 19px;
-      font-weight: 600;
-      margin-top: 25px;
-    }
-    .thirdtitle {
-      margin-top: 15px;
-      font-size: 16px;
-      span {
-        color: #ff0000;
+    align-items: start;
+    .leftbar {
+      position: sticky;
+      top: 20px;
+      width: 250px;
+      background-color: #fff;
+      border-radius: 20px;
+      padding: 15px;
+      .baritem {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        font-size: 15px;
+        font-weight: 600;
+        padding: 10px 15px;
+        border-radius: 10px;
+        margin-bottom: 2px;
+        cursor: pointer;
+        img {
+          width: 20px;
+          margin-right: 5px;
+        }
+        span {
+          flex: 1;
+          font-size: 15px;
+          font-weight: 600;
+        }
+        .wsubarrow {
+          width: 15px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          transition: all .2s ease;
+          img {
+            width: 100%;
+            margin-right: 0;
+          }
+        }
+        .wsubarrow.open {
+          transform: rotate(180deg);
+        }
       }
+      .baritem:hover {
+        background-color: #f7f7f7;
+      }
+      .fold {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        .baritem2 {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          font-size: 15px;
+          padding: 10px 15px;
+          padding-left: 40px;
+          border-radius: 10px;
+          margin-bottom: 2px;
+          cursor: pointer;
+        }
+        .baritem2:hover {
+          background-color: #f7f7f7;
+        }
+      }
+    }
+    .right {
+      flex: 1;
+      height: 1800px;
+      background-color: #fff;
+      border-radius: 20px;
+      margin-left: 20px;
+      overflow: hidden;
     }
   }
 }
@@ -424,7 +443,6 @@ img {
   justify-content: center;
   align-items: center;
   :deep(.el-button) {
-    /* 自定义圆角按钮的通用尺寸 */
     width: 230px;
     height: 45px;
     font-size: 19px;
@@ -436,7 +454,7 @@ img {
   right: 30px;
   transform: translateY(-50%);
   width: 60px;
-  height: 225px;
+  height: 300px;
   border-radius: 40px;
   background-color: #fff;
   box-shadow: 0px 0px 3px rgba(0,0,0,0.2);
