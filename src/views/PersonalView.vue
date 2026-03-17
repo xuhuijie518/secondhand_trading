@@ -18,6 +18,9 @@ const showInfo = () => {
 let isOpen1 = ref(true)
 let isOpen2 = ref(true)
 
+// 控制右侧界面
+let selrightscreen = ref(1)
+
 const router = useRouter()
 const goHome = () => {
   router.push({ 
@@ -105,7 +108,7 @@ const openPersonalPage = () => {
     <div class="contentbox">
       <div class="content">
         <div class="leftbar">
-          <div class="baritem">
+          <div class="baritem" @click="selrightscreen = 1" :style="{backgroundColor: selrightscreen == 1 ? '#f7f7f7': '#fff'}">
             <img src="/src/assets/img/user.webp"/>
             个人空间
           </div>
@@ -118,18 +121,18 @@ const openPersonalPage = () => {
           </div>
           <el-collapse-transition>
             <div class="fold" v-if="isOpen1">
-              <div class="baritem2">
+              <div class="baritem2" @click="selrightscreen = 2" :style="{backgroundColor: selrightscreen == 2 ? '#f7f7f7': '#fff'}">
                 我发布的
               </div>
-              <div class="baritem2">
+              <div class="baritem2" @click="selrightscreen = 3" :style="{backgroundColor: selrightscreen == 3 ? '#f7f7f7': '#fff'}">
                 我卖出的
               </div>
-              <div class="baritem2">
+              <div class="baritem2" @click="selrightscreen = 4" :style="{backgroundColor: selrightscreen == 4 ? '#f7f7f7': '#fff'}">
                 我买到的
               </div>
             </div>
           </el-collapse-transition>
-          <div class="baritem">
+          <div class="baritem" @click="selrightscreen = 5" :style="{backgroundColor: selrightscreen == 5 ? '#f7f7f7': '#fff'}">
             <img src="/src/assets/img/collection.webp"/>
             我的收藏
           </div>
@@ -142,17 +145,17 @@ const openPersonalPage = () => {
           </div>
           <el-collapse-transition>
             <div class="fold" v-if="isOpen2">
-              <div class="baritem2">
+              <div class="baritem2" @click="selrightscreen = 6" :style="{backgroundColor: selrightscreen == 6 ? '#f7f7f7': '#fff'}">
                 个人资料
               </div>
-              <div class="baritem2" style="margin-bottom: 0;">
+              <div class="baritem2" style="margin-bottom: 0;" @click="selrightscreen = 7" :style="{backgroundColor: selrightscreen == 7 ? '#f7f7f7': '#fff'}">
                 账号与安全
               </div>
             </div>
           </el-collapse-transition>
         </div>
         <div class="right">
-          <personalspace/>
+          <personalspace v-if="selrightscreen == 1"/>
         </div>
       </div>
     </div>
@@ -423,7 +426,6 @@ img {
     }
     .right {
       flex: 1;
-      height: 1800px;
       background-color: #fff;
       border-radius: 20px;
       margin-left: 20px;

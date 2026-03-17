@@ -173,8 +173,10 @@ const openPersonalPage = () => {
           <div class="goodsitem" v-for="(item,index) in goodslist.slice(0,15)" :key="index">
             <div class="box">
               <div class="photo">
-                <div v-if="item.img"></div>
-                <div v-else><img src="/src/assets/img/noimg.png"/></div>
+                <div class="photoc" v-if="item.img">
+                    <img :src="item.img"/>
+                </div>
+                <div class="photoc" v-else><img src="/src/assets/img/noimg.png"/></div>
               </div>
               <div class="intd">
                 <div class="goodsname">{{ item.name }}</div>
@@ -449,9 +451,16 @@ img {
             aspect-ratio: 1 / 1;
             border-radius: 20px;
             overflow: hidden;
-            img {
-              width: 100%;
-              height: 100%;
+            .photoc {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
             }
           }
           .intd {
